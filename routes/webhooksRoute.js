@@ -29,8 +29,9 @@ router.post('/webhook', express.json(), async (req, res) => {
     console.log("✅ Amount:", amount);
     console.log("✅ Status:", status);
     
-
-    res.status(200).json({ status: "success", payment_id, order_id });
+    if(status === "captured"){
+      res.status(200).json({ status: "success", payment_id, order_id });
+    }
   } else {
     console.error("❌ Webhook Verification Failed");
     res.status(400).json({ status: "failed", message: "Invalid signature" });
