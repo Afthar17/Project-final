@@ -34,24 +34,19 @@ router.post("/webhook", express.json(), async (req, res) => {
     //   res.status(200).json({ status: "success", payment_id, order_id });
     // }
     if (status === "captured") {
-      // Notify ESP8266
-      try {
-        const esp8266_url = "http://192.168.29.119/payment-success";
-        await axios.post(
-          esp8266_url,
-          {
-            status: "success",
-            payment_id,
-            order_id,
-            amount,
-          },
-          { headers: { "Content-Type": "application/json" } }
-        );
+      console.log("Payment Captured!");
 
-        console.log("ESP8266 notified successfully");
-      } catch (error) {
-        console.error("Failed to notify ESP8266:", error.message);
-      }
+      // Send MQTT Message to ESP8266
+      const message = JSON.stringify({
+        status: "success",
+        payment_id,
+        order_id,
+        amount,
+      });
+
+      client.publish("payment/success", message);
+
+      console.log("Payment message sent to ESP8266!");
 
       res.status(200).json({ status: "success", payment_id, order_id, amount });
     } else {
