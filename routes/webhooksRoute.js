@@ -1,9 +1,12 @@
 import express from "express";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import axios from "axios";
 
 dotenv.config();
 const router = express.Router();
+
+const ESP_IP = "http://192.168.69.119";
 
 router.post("/webhook", express.json(), async (req, res) => {
   const secret = process.env.WEBHOOK_SECRET;
@@ -29,8 +32,21 @@ router.post("/webhook", express.json(), async (req, res) => {
     console.log(" Amount:", amount);
     console.log(" Status:", status);
 
+    // if (status === "captured") {
+    //   res.status(200).json({ status: "success", payment_id, order_id });
+    // }
     if (status === "captured") {
-      res.status(200).json({ status: "success", payment_id, order_id });
+      try {
+        await axios.post(`${ESP_IP}/webhook`, {
+          status: "success",
+          payment_id,
+          order_id,
+          amount,
+        });
+        console.log("Payment details sent to ESP");
+      } catch (error) {
+        console.error("Error sending payment details to ESP:", error);
+      }
     }
   } else {
     console.error(" Webhook Verification Failed");
