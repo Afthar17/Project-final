@@ -9,6 +9,8 @@ const client = mqtt.connect(`mqtts://${mqtt_host}:${mqtt_port}`, {
   username: mqtt_user,
   password: mqtt_password,
   rejectUnauthorized: false,
+  connectTimeout: 5000, // Timeout in 5 seconds
+  clientId: `backend_${Math.random().toString(16).slice(2)}`,
 });
 
 client.on("connect", () => {
