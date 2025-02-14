@@ -36,8 +36,17 @@ router.post("/webhook", express.json(), async (req, res) => {
     if (status === "captured") {
       // Notify ESP8266
       try {
-        const esp8266_url = "http://192.168.69.119/payment-success"; // Change to your ESP8266 IP
-        await axios.post(esp8266_url, { payment_id, order_id, amount });
+        const esp8266_url = "http://192.168.69.119/payment-success";
+        await axios.post(
+          esp8266_url,
+          {
+            status: "success",
+            payment_id,
+            order_id,
+            amount,
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
 
         console.log("ESP8266 notified successfully");
       } catch (error) {
