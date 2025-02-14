@@ -8,10 +8,15 @@ const mqtt_password = "silsil@123";
 const client = mqtt.connect(`mqtts://${mqtt_host}:${mqtt_port}`, {
   username: mqtt_user,
   password: mqtt_password,
+  rejectUnauthorized: false,
 });
 
 client.on("connect", () => {
   console.log("Connected to MQTT Broker!");
+});
+
+client.on("error", (error) => {
+  console.error("❌ MQTT Connection Error:", error);
 });
 
 export default client;

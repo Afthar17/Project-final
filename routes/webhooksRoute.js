@@ -44,9 +44,13 @@ router.post("/webhook", express.json(), async (req, res) => {
         amount,
       });
 
-      client.publish("payment/success", message);
-
-      console.log("Payment message sent to ESP8266!");
+      client.publish("payment/success", message, {}, (error) => {
+        if (error) {
+          console.error("❌ MQTT Publish Error:", error);
+        } else {
+          console.log("✅ MQTT Message Sent Successfully!");
+        }
+      });
 
       res.status(200).json({ status: "success", payment_id, order_id, amount });
     } else {
